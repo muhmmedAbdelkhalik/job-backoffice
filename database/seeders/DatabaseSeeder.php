@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
         $this->call([
             IndustrySeeder::class,
         ]);
@@ -43,7 +44,6 @@ class DatabaseSeeder extends Seeder
         // Create Company
         foreach ($jobData['companies'] as $company) {
             // Create fake user as company owner
-            $faker = Faker::create();
             $companyOwner = User::firstOrCreate([
                 'email' => $faker->unique()->safeEmail(),
             ], [
@@ -95,7 +95,6 @@ class DatabaseSeeder extends Seeder
             // Get random job vacancy
             $jobVacancy = JobVacany::inRandomOrder()->first();
             // Create applicant user
-            $faker = Faker::create();
             $applicant = User::firstOrCreate([
                 'email' => $faker->unique()->safeEmail(),
             ], [

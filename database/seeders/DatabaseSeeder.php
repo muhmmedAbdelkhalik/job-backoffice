@@ -56,11 +56,15 @@ class DatabaseSeeder extends Seeder
             // Find the industry by name and get its ID
             $industry = \App\Models\Industry::where('name', $company['industry'])->first();
             
+            if (!$industry) {
+                continue; // Skip this company if industry not found
+            }
+            
             Company::firstOrCreate([
                 'name' => $company['name'],
             ], [
                 'address' => $company['address'],
-                'industry_id' => $industry ? $industry->id : null,
+                'industry_id' => $industry->id,
                 'website' => $company['website'],
                 'owner_id' => $companyOwner->id,
             ]);
@@ -70,8 +74,16 @@ class DatabaseSeeder extends Seeder
         foreach ($jobData['jobVacancies'] as $jobVacancy) {
 
             $company = Company::where('name', $jobVacancy['company'])->first();
+            
+            if (!$company) {
+                continue; // Skip this job vacancy if company not found
+            }
 
             $category = JobCategory::where('name', $jobVacancy['category'])->first();
+            
+            if (!$category) {
+                continue; // Skip this job vacancy if category not found
+            }
 
             JobVacany::firstOrCreate([
                 'title' => $jobVacancy['title'],
@@ -94,6 +106,11 @@ class DatabaseSeeder extends Seeder
         foreach ($jobApplications['jobApplications'] as $jobApplication) {
             // Get random job vacancy
             $jobVacancy = JobVacany::inRandomOrder()->first();
+            
+            if (!$jobVacancy) {
+                continue; // Skip if no job vacancies exist
+            }
+            
             // Create applicant user
             $applicant = User::firstOrCreate([
                 'email' => $faker->unique()->safeEmail(),
